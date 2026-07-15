@@ -1,0 +1,19 @@
+{
+  "name": "Excel Formula Trainer",
+  "short_name": "Excel Trainer",
+  "description": "Learn Microsoft Excel formulas interactively — practice, quiz, and level up.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f6f7fb",
+  "theme_color": "#4f46e5",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
