@@ -1,0 +1,7 @@
+# Build-free static site: nothing to ignore by default.
+# Add entries here if you later introduce local-only files.
+node_modules/
+*.log
+.DS_Store
+.env
+.env.*
