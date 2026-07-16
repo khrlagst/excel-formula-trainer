@@ -5,7 +5,7 @@
 > **An interactive, beginner-friendly web app for learning Microsoft Excel formulas. No build step, no dependencies, no backend — plain HTML, CSS, and JavaScript.**
 
 [![Version](https://img.shields.io/badge/version-0.1.11-blue.svg)](https://github.com/excel-formula-trainer)
-[![Language](https://img.shields.io/badge/language-Python-green.svg)](https://github.com/excel-formula-trainer)
+[![Language](https://img.shields.io/badge/language-JavaScript-green.svg)](https://github.com/excel-formula-trainer)
 [![Generated](https://img.shields.io/badge/generated-docgen-8A2BE2)](https://github.com/opencode-ai/docgen)
 
 </div>
