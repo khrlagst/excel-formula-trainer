@@ -665,6 +665,7 @@ function renderLangSelect() {
    ============================================================ */
 let currentTab = "learn";
 let selectedLevelId = state.unlockedLevel;
+let selectedConceptId = CONCEPTS[0].id;
 let practiceFilter = "";
 const root = document.getElementById("app");
 
@@ -681,7 +682,8 @@ function render() {
   const main = el("main", { class: "main" });
   if (currentTab === "learn") { main.appendChild(renderBadges()); main.appendChild(renderLearn()); }
   else if (currentTab === "practice") main.appendChild(renderPractice());
-  else main.appendChild(renderQuiz());
+  else if (currentTab === "quiz") main.appendChild(renderQuiz());
+  else main.appendChild(renderLearnMore());
   root.appendChild(main);
   root.appendChild(renderBottomNav());
   if (!document.querySelector(".cheat-fab")) {
@@ -751,7 +753,7 @@ function renderLevelPicker() {
 }
 
 function renderTabs() {
-  const tabs = [["learn", t("tab.learn")], ["practice", t("tab.practice")], ["quiz", t("tab.quiz")]];
+  const tabs = [["learn", t("tab.learn")], ["practice", t("tab.practice")], ["quiz", t("tab.quiz")], ["more", t("tab.more")]];
   const nav = el("div", { class: "tabs", role: "tablist" });
   for (const [id, label] of tabs) {
     nav.appendChild(el("button", {
@@ -766,9 +768,10 @@ function renderTabs() {
 
 function renderBottomNav() {
   const items = [
-    ["learn", "📚", t("nav.learn")],
-    ["practice", "🧪", t("nav.practice")],
-    ["quiz", "🎯", t("nav.quiz")],
+    ["learn", "??", t("nav.learn")],
+    ["practice", "??", t("nav.practice")],
+    ["quiz", "??", t("nav.quiz")],
+    ["more", "??", t("nav.more")],
   ];
   const nav = el("nav", { class: "bottomnav", "aria-label": "Primary" });
   for (const [id, icon, label] of items) {
@@ -994,6 +997,301 @@ function renderLearnInto(list, lvl) {
     }
     list.appendChild(el("article", { class: "card" }, children));
   }
+}
+
+/* ---------- Learn More (walkthroughs) ---------- */
+function conceptById(id) { return CONCEPTS.find((c) => c.id === id); }
+
+function renderLearnMore() {
+  const wrap = el("section", { class: "more" });
+  wrap.appendChild(el("div", { class: "learn__head" }, [
+    el("h2", { text: t("more.title") }),
+    el("p", { class: "muted", text: t("more.intro") }),
+  ]));
+
+  // Category nav
+  const nav = el("nav", { class: "morenav", "aria-label": t("more.catLabel") });
+  for (const c of CONCEPTS) {
+    nav.appendChild(el("button", {
+      class: "morepill" + (c.id === selectedConceptId ? " is-active" : ""),
+      on: { click: () => { selectedConceptId = c.id; render(); } },
+    }, [
+      el("span", { class: "morepill__icon", text: c.icon }),
+      el("span", { class: "morepill__name", text: c.title }),
+    ]));
+  }
+  wrap.appendChild(nav);
+
+  const concept = L(conceptById(selectedConceptId));
+  wrap.appendChild(el("div", { class: "more__head" }, [
+    el("span", { class: "more__icon", text: concept.icon }),
+    el("div", {}, [
+      el("h3", { text: concept.title }),
+      el("p", { class: "muted", text: concept.intro }),
+    ]),
+  ]));
+
+  if (concept.type === "shortcuts") wrap.appendChild(renderShortcuts(concept));
+  else if (concept.type === "walkthrough") wrap.appendChild(renderWalkthrough(concept));
+  else if (concept.type === "pivot") wrap.appendChild(renderPivot(concept));
+  else if (concept.type === "chart") wrap.appendChild(renderChart(concept));
+  else if (concept.type === "powerquery") wrap.appendChild(renderPowerQuery(concept));
+
+  return wrap;
+}
+
+function renderShortcuts(concept) {
+  const wrap = el("div", { class: "shortcuts" });
+  for (const g of concept.groups) {
+    const card = el("div", { class: "scard" });
+    card.appendChild(el("h4", { class: "scard__title", text: g.name }));
+    const table = el("table", { class: "shortcut-table" });
+    const thead = el("tr", {}, [
+      el("th", { text: t("shortcut.keys") }),
+      el("th", { text: t("shortcut.desc") }),
+    ]);
+    table.appendChild(thead);
+    for (const r of g.rows) {
+      table.appendChild(el("tr", {}, [
+        el("td", {}, [el("kbd", { class: "kbd", text: r.keys })]),
+        el("td", { text: r.desc }),
+      ]));
+    }
+    card.appendChild(table);
+    wrap.appendChild(card);
+  }
+  return wrap;
+}
+
+function renderWalkthrough(concept) {
+  const wrap = el("div", { class: "walk" });
+  const steps = el("ol", { class: "steps" });
+  concept.steps.forEach((s, i) => {
+    steps.appendChild(el("li", { class: "step" }, [
+      el("span", { class: "step__num", text: String(i + 1) }),
+      el("div", {}, [
+        el("strong", { class: "step__title", text: s.title }),
+        el("p", { class: "step__body", text: s.body }),
+      ]),
+    ]));
+  });
+  wrap.appendChild(steps);
+
+  if (concept.demo) {
+    const d = concept.demo;
+    let demoVal = "-";
+    try { demoVal = formatValue(evaluateFormula(d.formula, d.grid)); } catch (e) {}
+    const bounds = gridBounds(d.grid);
+    const table = buildGridTable(d.grid, bounds, d.targetCell);
+    const note = concept.i18n && concept.i18n[currentLang] && concept.i18n[currentLang].demo ? concept.i18n[currentLang].demo.note : d.note;
+    wrap.appendChild(el("div", { class: "card__demo" }, [
+      el("span", { class: "card__exlabel", text: t("example.label") }),
+      el("div", { class: "grid-wrap" }, [table]),
+      el("p", { class: "card__democalc" }, [
+        el("code", { text: d.formula }),
+        el("span", { class: "card__demoeq", text: " = " }),
+        el("strong", { text: demoVal }),
+      ]),
+      el("p", { class: "more__note", text: t("more.note") + ": " + note }),
+    ]));
+  }
+  return wrap;
+}
+
+function renderPivot(concept) {
+  const wrap = el("div", { class: "walk" });
+  const steps = el("ol", { class: "steps" });
+  concept.steps.forEach((s, i) => {
+    steps.appendChild(el("li", { class: "step" }, [
+      el("span", { class: "step__num", text: String(i + 1) }),
+      el("div", {}, [
+        el("strong", { class: "step__title", text: s.title }),
+        el("p", { class: "step__body", text: s.body }),
+      ]),
+    ]));
+  });
+  wrap.appendChild(steps);
+
+  const pd = concept.pivotDemo;
+  // Build cross-tab from source grid
+  const srcBounds = gridBounds(pd.source);
+  const table = buildGridTable(pd.source, srcBounds, null);
+  // Compute aggregate
+  const headers = [];
+  for (let c = 0; c <= srcBounds.cols; c++) headers.push(pd.source[colLetter(c) + "1"]);
+  const rowIdx = headers.indexOf(pd.rowsField) !== -1 ? headers.indexOf(pd.rowsField) : 0;
+  const colIdx = headers.indexOf(pd.colsField) !== -1 ? headers.indexOf(pd.colsField) : 1;
+  const valIdx = headers.indexOf(pd.valuesField) !== -1 ? headers.indexOf(pd.valuesField) : 2;
+  const rowsMap = {};
+  for (let r = 1; r <= srcBounds.rows; r++) {
+    const rowRef = "A" + (r + 1);
+    const rec = {};
+    for (let c = 0; c <= srcBounds.cols; c++) rec[headers[c]] = pd.source[colLetter(c) + (r + 1)];
+    const rk = rec[pd.rowsField], ck = rec[pd.colsField];
+    rowsMap[rk] = rowsMap[rk] || {};
+    rowsMap[rk][ck] = (rowsMap[rk][ck] || 0) + Number(rec[pd.valuesField] || 0);
+  }
+  const rKeys = Object.keys(rowsMap);
+  const cKeys = [...new Set([].concat(...rKeys.map((k) => Object.keys(rowsMap[k]))))];
+  const resultGrid = { A1: pd.rowsField };
+  cKeys.forEach((ck, i) => { resultGrid[colLetter(i + 2) + "1"] = ck; });
+  rKeys.forEach((rk, ri) => {
+    const rr = ri + 2;
+    resultGrid["A" + rr] = rk;
+    cKeys.forEach((ck, ci) => { resultGrid[colLetter(ci + 2) + rr] = rowsMap[rk][ck]; });
+  });
+  const rb = gridBounds(resultGrid);
+  const resultTable = buildGridTable(resultGrid, rb, null);
+  const note = concept.i18n && concept.i18n[currentLang] && concept.i18n[currentLang].pivotDemo ? concept.i18n[currentLang].pivotDemo.note : pd.note;
+
+  wrap.appendChild(el("div", { class: "more__demo" }, [
+    el("p", { class: "more__sub", text: "Source data" }),
+    el("div", { class: "grid-wrap" }, [table]),
+    el("p", { class: "more__sub", text: "Pivot result (sum of " + pd.valuesField + ")" }),
+    el("div", { class: "grid-wrap" }, [resultTable]),
+    el("p", { class: "more__note", text: t("more.note") + ": " + note }),
+  ]));
+  return wrap;
+}
+
+function renderChart(concept) {
+  const wrap = el("div", { class: "walk" });
+  const steps = el("ol", { class: "steps" });
+  concept.steps.forEach((s, i) => {
+    steps.appendChild(el("li", { class: "step" }, [
+      el("span", { class: "step__num", text: String(i + 1) }),
+      el("div", {}, [
+        el("strong", { class: "step__title", text: s.title }),
+        el("p", { class: "step__body", text: s.body }),
+      ]),
+    ]));
+  });
+  wrap.appendChild(steps);
+
+  const cd = concept.chartDemo;
+  const note = concept.i18n && concept.i18n[currentLang] && concept.i18n[currentLang].chartDemo ? concept.i18n[currentLang].chartDemo.note : cd.note;
+  const state = { kind: cd.kind, cats: cd.cats.slice(), series: cd.series.slice() };
+
+  const chartBox = el("div", { class: "chartbox" });
+  const controls = el("div", { class: "btn-row" });
+  const kinds = [["column", t("chart.column")], ["line", t("chart.line")], ["pie", t("chart.pie")], ["bar", t("chart.bar")]];
+  for (const [k, label] of kinds) {
+    controls.appendChild(el("button", {
+      class: "btn" + (state.kind === k ? " is-active" : ""),
+      on: { click: () => { state.kind = k; drawChart(); markActive(controls, k); } },
+    }, [label]));
+  }
+  function markActive(box, k) {
+    Array.from(box.children).forEach((b, i) => b.classList.toggle("is-active", kinds[i][0] === k));
+  }
+  function drawChart() {
+    clear(chartBox);
+    chartBox.appendChild(buildChart(state.kind, state.cats, state.series, t("chart.title")));
+  }
+  drawChart();
+
+  wrap.appendChild(el("div", { class: "more__demo" }, [
+    el("p", { class: "more__sub", text: t("example.label") }),
+    el("div", { class: "chart-wrap" }, [chartBox]),
+    controls,
+    el("p", { class: "more__note", text: t("more.note") + ": " + note }),
+  ]));
+  return wrap;
+}
+
+function buildChart(kind, cats, series, title) {
+  const W = 320, H = 200, pad = 28;
+  const max = Math.max(...series, 1);
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+  svg.setAttribute("class", "chart");
+  svg.setAttribute("role", "img");
+  svg.setAttribute("aria-label", title);
+  const add = (tag, attrs, text) => {
+    const e = document.createElementNS("http://www.w3.org/2000/svg", tag);
+    for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+    if (text) e.textContent = text;
+    svg.appendChild(e);
+    return e;
+  };
+  add("text", { x: W / 2, y: 14, "text-anchor": "middle", class: "chart__title" }, title);
+  if (kind === "pie") {
+    let total = series.reduce((a, b) => a + b, 0) || 1;
+    let ang = -Math.PI / 2;
+    const cx = W / 2, cy = H / 2 + 10, R = 70;
+    const colors = ["#4f46e5", "#06b6d4", "#f59e0b", "#16a34a", "#dc2626"];
+    series.forEach((v, i) => {
+      const a2 = ang + (v / total) * Math.PI * 2;
+      const x1 = cx + R * Math.cos(ang), y1 = cy + R * Math.sin(ang);
+      const x2 = cx + R * Math.cos(a2), y2 = cy + R * Math.sin(a2);
+      const large = (v / total) > 0.5 ? 1 : 0;
+      add("path", { d: "M" + cx + "," + cy + " L" + x1 + "," + y1 + " A" + R + "," + R + " 0 " + large + " 1 " + x2 + "," + y2 + " Z", fill: colors[i % colors.length] });
+      ang = a2;
+    });
+    return svg;
+  }
+  if (kind === "line") {
+    const pts = series.map((v, i) => {
+      const x = pad + (i * (W - pad * 2)) / Math.max(1, cats.length - 1);
+      const y = H - pad - (v / max) * (H - pad * 2 - 20);
+      return [x, y];
+    });
+    add("polyline", { points: pts.map((p) => p.join(",")).join(" "), fill: "none", stroke: "#4f46e5", "stroke-width": "2.5" });
+    pts.forEach((p, i) => add("circle", { cx: p[0], cy: p[1], r: 3.5, fill: "#06b6d4" }));
+    pts.forEach((p, i) => add("text", { x: p[0], y: H - 6, "text-anchor": "middle", class: "chart__cat" }, cats[i]));
+    return svg;
+  }
+  // column or bar
+  const horiz = kind === "bar";
+  const n = series.length;
+  const band = horiz ? (H - pad * 2 - 20) / n : (W - pad * 2) / n;
+  const colors = ["#4f46e5", "#06b6d4", "#f59e0b", "#16a34a", "#dc2626"];
+  series.forEach((v, i) => {
+    if (horiz) {
+      const y = pad + 20 + i * band;
+      const w = (v / max) * (W - pad * 2);
+      add("rect", { x: pad, y: y + band * 0.15, width: w, height: band * 0.7, rx: 4, fill: colors[i % colors.length] });
+      add("text", { x: 4, y: y + band / 2 + 4, class: "chart__cat" }, cats[i]);
+    } else {
+      const x = pad + i * band;
+      const h = (v / max) * (H - pad * 2 - 20);
+      const y = H - pad - h;
+      add("rect", { x: x + band * 0.15, y: y, width: band * 0.7, height: h, rx: 4, fill: colors[i % colors.length] });
+      add("text", { x: x + band / 2, y: H - 6, "text-anchor": "middle", class: "chart__cat" }, cats[i]);
+    }
+  });
+  return svg;
+}
+
+function renderPowerQuery(concept) {
+  const wrap = el("div", { class: "walk" });
+  const steps = el("ol", { class: "steps" });
+  concept.steps.forEach((s, i) => {
+    steps.appendChild(el("li", { class: "step" }, [
+      el("span", { class: "step__num", text: String(i + 1) }),
+      el("div", {}, [
+        el("strong", { class: "step__title", text: s.title }),
+        el("p", { class: "step__body", text: s.body }),
+      ]),
+    ]));
+  });
+  wrap.appendChild(steps);
+
+  const pq = concept.pqDemo;
+  const beforeBounds = gridBounds(pq.before);
+  const beforeTable = buildGridTable(pq.before, beforeBounds, null);
+  const afterBounds = gridBounds(pq.after);
+  const afterTable = buildGridTable(pq.after, afterBounds, null);
+  const note = concept.i18n && concept.i18n[currentLang] && concept.i18n[currentLang].pqDemo ? concept.i18n[currentLang].pqDemo.note : pq.note;
+
+  wrap.appendChild(el("div", { class: "more__demo" }, [
+    el("p", { class: "more__sub", text: "Before (wide)" }),
+    el("div", { class: "grid-wrap" }, [beforeTable]),
+    el("p", { class: "more__sub", text: "After (unpivoted, tidy)" }),
+    el("div", { class: "grid-wrap" }, [afterTable]),
+    el("p", { class: "more__note", text: t("more.note") + ": " + note }),
+  ]));
+  return wrap;
 }
 
 /* ---------- Practice ---------- */

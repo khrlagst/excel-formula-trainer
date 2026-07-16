@@ -1603,3 +1603,364 @@ const LEVELS = [
 const PASS_THRESHOLD = 0.8; // 80% to level up
 const XP_PER_QUIZ = 50;
 const XP_PER_PRACTICE = 10;
+
+// ============================================================
+// LEARN MORE — walkthrough catalog (no practice/quiz; explanatory)
+// Each category is a self-contained topic. Localized via `i18n`.
+// ============================================================
+const CONCEPTS = [
+  {
+    id: "shortcuts",
+    icon: "⌨️",
+    type: "shortcuts",
+    title: "Keyboard Shortcuts",
+    intro: "Move faster in Excel. Learn the keys that save you clicks every day.",
+    groups: [
+      {
+        name: "Navigation",
+        rows: [
+          { keys: "Ctrl + Arrow", desc: "Jump to the edge of data in that direction." },
+          { keys: "Ctrl + Home", desc: "Go to cell A1." },
+          { keys: "Ctrl + End", desc: "Go to the last used cell." },
+          { keys: "F5", desc: "Go To — jump to any cell or named range." },
+        ],
+      },
+      {
+        name: "Selection",
+        rows: [
+          { keys: "Shift + Click", desc: "Select a range from the active cell to the clicked cell." },
+          { keys: "Ctrl + Space", desc: "Select the entire column." },
+          { keys: "Shift + Space", desc: "Select the entire row." },
+          { keys: "Ctrl + A", desc: "Select the whole table or region." },
+        ],
+      },
+      {
+        name: "Editing",
+        rows: [
+          { keys: "F2", desc: "Edit the active cell." },
+          { keys: "Ctrl + ;", desc: "Insert today's date." },
+          { keys: "Ctrl + D", desc: "Fill down — copy the cell above." },
+          { keys: "Ctrl + R", desc: "Fill right — copy the cell to the left." },
+        ],
+      },
+      {
+        name: "Formatting",
+        rows: [
+          { keys: "Ctrl + B", desc: "Bold." },
+          { keys: "Ctrl + 1", desc: "Open the Format Cells dialog." },
+          { keys: "Alt + =", desc: "AutoSum — insert SUM for the column above." },
+          { keys: "Ctrl + T", desc: "Create a Table from the selected range." },
+        ],
+      },
+    ],
+    i18n: {
+      es: {
+        title: "Atajos de teclado",
+        intro: "Muévete más rápido en Excel. Aprende las teclas que te ahorran clics cada día.",
+        groups: [
+          { name: "Navegación", rows: [
+            { keys: "Ctrl + Flechas", desc: "Salta al borde de los datos en esa dirección." },
+            { keys: "Ctrl + Inicio", desc: "Ve a la celda A1." },
+            { keys: "Ctrl + Fin", desc: "Ve a la última celda usada." },
+            { keys: "F5", desc: "Ir a — salta a cualquier celda o rango con nombre." },
+          ]},
+          { name: "Selección", rows: [
+            { keys: "Shift + Clic", desc: "Selecciona un rango desde la celda activa hasta la celda clicada." },
+            { keys: "Ctrl + Espacio", desc: "Selecciona toda la columna." },
+            { keys: "Shift + Espacio", desc: "Selecciona toda la fila." },
+            { keys: "Ctrl + A", desc: "Selecciona toda la tabla o región." },
+          ]},
+          { name: "Edición", rows: [
+            { keys: "F2", desc: "Edita la celda activa." },
+            { keys: "Ctrl + ;", desc: "Inserta la fecha de hoy." },
+            { keys: "Ctrl + D", desc: "Rellenar hacia abajo — copia la celda de arriba." },
+            { keys: "Ctrl + R", desc: "Rellenar a la derecha — copia la celda de la izquierda." },
+          ]},
+          { name: "Formato", rows: [
+            { keys: "Ctrl + N", desc: "Negrita." },
+            { keys: "Ctrl + 1", desc: "Abre el cuadro Formato de celdas." },
+            { keys: "Alt + =", desc: "Autosuma — inserta SUM para la columna de arriba." },
+            { keys: "Ctrl + T", desc: "Crea una Tabla desde el rango seleccionado." },
+          ]},
+        ],
+      },
+      id: {
+        title: "Pintasan Keyboard",
+        intro: "Bergerak lebih cepat di Excel. Pelajari tombol yang menghemat klik setiap hari.",
+        groups: [
+          { name: "Navigasi", rows: [
+            { keys: "Ctrl + Panah", desc: "Lompat ke tepi data pada arah tersebut." },
+            { keys: "Ctrl + Home", desc: "Pergi ke sel A1." },
+            { keys: "Ctrl + End", desc: "Pergi ke sel terakhir yang digunakan." },
+            { keys: "F5", desc: "Go To — lompat ke sel atau rentang bernama apa pun." },
+          ]},
+          { name: "Seleksi", rows: [
+            { keys: "Shift + Klik", desc: "Pilih rentang dari sel aktif ke sel yang diklik." },
+            { keys: "Ctrl + Spasi", desc: "Pilih seluruh kolom." },
+            { keys: "Shift + Spasi", desc: "Pilih seluruh baris." },
+            { keys: "Ctrl + A", desc: "Pilih seluruh tabel atau region." },
+          ]},
+          { name: "Pengeditan", rows: [
+            { keys: "F2", desc: "Edit sel aktif." },
+            { keys: "Ctrl + ;", desc: "Sisipkan tanggal hari ini." },
+            { keys: "Ctrl + D", desc: "Isi ke bawah — salin sel di atas." },
+            { keys: "Ctrl + R", desc: "Isi ke kanan — salin sel di kiri." },
+          ]},
+          { name: "Format", rows: [
+            { keys: "Ctrl + B", desc: "Tebal." },
+            { keys: "Ctrl + 1", desc: "Buka dialog Format Sel." },
+            { keys: "Alt + =", desc: "AutoSum — sisipkan SUM untuk kolom di atas." },
+            { keys: "Ctrl + T", desc: "Buat Tabel dari rentang terpilih." },
+          ]},
+        ],
+      },
+      fr: {
+        title: "Raccourcis clavier",
+        intro: "Gagne du temps dans Excel. Apprends les touches qui t'évitent des clics chaque jour.",
+        groups: [
+          { name: "Navigation", rows: [
+            { keys: "Ctrl + Flèches", desc: "Saute au bord des données dans cette direction." },
+            { keys: "Ctrl + Origine", desc: "Va à la cellule A1." },
+            { keys: "Ctrl + Fin", desc: "Va à la dernière cellule utilisée." },
+            { keys: "F5", desc: "Atteindre — saute à n'importe quelle cellule ou plage nommée." },
+          ]},
+          { name: "Sélection", rows: [
+            { keys: "Maj + Clic", desc: "Sélectionne une plage de la cellule active à la cellule cliquée." },
+            { keys: "Ctrl + Espace", desc: "Sélectionne toute la colonne." },
+            { keys: "Maj + Espace", desc: "Sélectionne toute la ligne." },
+            { keys: "Ctrl + A", desc: "Sélectionne tout le tableau ou la région." },
+          ]},
+          { name: "Édition", rows: [
+            { keys: "F2", desc: "Modifie la cellule active." },
+            { keys: "Ctrl + ;", desc: "Insère la date du jour." },
+            { keys: "Ctrl + D", desc: "Recopier vers le bas — copie la cellule au-dessus." },
+            { keys: "Ctrl + R", desc: "Recopier vers la droite — copie la cellule à gauche." },
+          ]},
+          { name: "Mise en forme", rows: [
+            { keys: "Ctrl + G", desc: "Gras." },
+            { keys: "Ctrl + 1", desc: "Ouvre la boîte Format de cellule." },
+            { keys: "Alt + =", desc: "Somme auto — insère SOMME pour la colonne au-dessus." },
+            { keys: "Ctrl + T", desc: "Crée un Tableau à partir de la plage sélectionnée." },
+          ]},
+        ],
+      },
+    },
+  },
+  {
+    id: "tables",
+    icon: "🗂️",
+    type: "walkthrough",
+    title: "Excel Tables",
+    intro: "Turn a range into a smart Table. Formulas become readable and auto-expand.",
+    steps: [
+      { title: "Create a Table", body: "Select your data and press Ctrl + T. Each column gets a name in the header row." },
+      { title: "Structured references", body: "Inside a Table, refer to a column by its name, not a cell range. Example: =SUM(Sales[Amount]) adds every value in the Amount column." },
+      { title: "The @ row", body: "Use @ for 'this row'. =[@Price]*[@Qty] multiplies Price and Qty on the same row. Excel fills it down for you." },
+      { title: "Auto-expand", body: "Add a row at the bottom and your Table — and any formula using it — grows automatically. No more fixing A1:A100 ranges." },
+    ],
+    demo: {
+      grid: { A1: "Item", B1: "Price", C1: "Qty", A2: "Pen", B2: 2, C2: 3, A3: "Book", B3: 12, C3: 1, A4: "Mug", B4: 5, C4: 4 },
+      targetCell: "D1",
+      formula: "=[@Price]*[@Qty]",
+      note: "The formula in D2 (Total) uses =[@Price]*[@Qty]. Watch how it fills down and uses column names, not cell addresses.",
+    },
+    i18n: {
+      es: {
+        title: "Tablas de Excel",
+        intro: "Convierte un rango en una Tabla inteligente. Las fórmulas se vuelven legibles y se expanden solas.",
+        steps: [
+          { title: "Crear una Tabla", body: "Selecciona tus datos y pulsa Ctrl + T. Cada columna obtiene un nombre en la fila de encabezado." },
+          { title: "Referencias estructuradas", body: "Dentro de una Tabla, haz referencia a una columna por su nombre. Ejemplo: =SUMA(Ventas[Monto]) suma todos los valores de la columna Monto." },
+          { title: "La fila @", body: "Usa @ para 'esta fila'. =[@Precio]*[@Cant] multiplica Precio y Cant en la misma fila. Excel lo rellena hacia abajo." },
+          { title: "Expansión automática", body: "Añade una fila abajo y tu Tabla — y cualquier fórmula que la use — crece sola. Adiós a arreglar rangos A1:A100." },
+        ],
+        demo: { note: "La fórmula en D2 (Total) usa =[@Precio]*[@Cant]. Observa cómo se rellena hacia abajo y usa nombres de columna." },
+      },
+      id: {
+        title: "Tabel Excel",
+        intro: "Ubah rentang menjadi Tabel cerdas. Rumus jadi mudah dibaca dan meluas sendiri.",
+        steps: [
+          { title: "Buat Tabel", body: "Pilih data dan tekan Ctrl + T. Setiap kolom mendapat nama di baris header." },
+          { title: "Referensi terstruktur", body: "Dalam Tabel, rujuk kolom lewat namanya. Contoh: =SUM(Penjualan[Jumlah]) menjumlahkan semua nilai di kolom Jumlah." },
+          { title: "Baris @", body: "Gunakan @ untuk 'baris ini'. =[@Harga]*[@Qty] mengalikan Harga dan Qty di baris yang sama. Excel mengisinya ke bawah." },
+          { title: "Meluas otomatis", body: "Tambah baris di bawah dan Tabel — serta rumus apa pun yang menggunakannya — tumbuh sendiri. Tidak perlu lagi memperbaiki rentang A1:A100." },
+        ],
+        demo: { note: "Rumus di D2 (Total) menggunakan =[@Harga]*[@Qty]. Perhatikan ia terisi ke bawah dan memakai nama kolom." },
+      },
+      fr: {
+        title: "Tables Excel",
+        intro: "Transforme une plage en Tableau intelligent. Les formules deviennent lisibles et s'étendent seules.",
+        steps: [
+          { title: "Créer un tableau", body: "Sélectionne tes données et appuie sur Ctrl + T. Chaque colonne reçoit un nom dans la ligne d'en-tête." },
+          { title: "Références structurées", body: "Dans un tableau, fais référence à une colonne par son nom. Exemple : =SOMME(Ventes[Montant]) additionne toutes les valeurs de la colonne Montant." },
+          { title: "La ligne @", body: "Utilise @ pour 'cette ligne'. =[@Prix]*[@Qté] multiplie Prix et Qté sur la même ligne. Excel la recopie vers le bas." },
+          { title: "Extension automatique", body: "Ajoute une ligne en bas et ton tableau — et toute formule qui l'utilise — grandit seul. Finir de corriger les plages A1:A100." },
+        ],
+        demo: { note: "La formule en D2 (Total) utilise =[@Prix]*[@Qté]. Regarde comme elle se recopie et utilise les noms de colonnes." },
+      },
+    },
+  },
+  {
+    id: "pivot",
+    icon: "🧩",
+    type: "pivot",
+    title: "PivotTables",
+    intro: "Summarize thousands of rows into a clean report by dragging fields. No formulas required.",
+    steps: [
+      { title: "Insert a PivotTable", body: "Select your data, go to Insert → PivotTable. Excel builds an empty canvas with a field list." },
+      { title: "Rows & Columns", body: "Drag a field to Rows (e.g. Region) and another to Columns (e.g. Month) to shape the grid." },
+      { title: "Values", body: "Drag a number field to Values (e.g. Sales). Excel sums it by default — change to Average, Count, and more." },
+      { title: "Slicers & refresh", body: "Add a Slicer to filter by clicking. When source data changes, right-click → Refresh." },
+    ],
+    pivotDemo: {
+      source: { A1: "Region", B1: "Month", C1: "Sales", A2: "North", B2: "Jan", C2: 100, A3: "North", B3: "Feb", C3: 150, A4: "South", B4: "Jan", C4: 200, A5: "South", B5: "Feb", C5: 120 },
+      rowsField: "Region",
+      colsField: "Month",
+      valuesField: "Sales",
+      agg: "SUM",
+      note: "Drag fields into Rows (Region) and Columns (Month); Values sums Sales. The result is the cross-tab below.",
+    },
+    i18n: {
+      es: {
+        title: "Tablas dinámicas",
+        intro: "Resume miles de filas en un informe limpio arrastrando campos. Sin fórmulas.",
+        steps: [
+          { title: "Insertar una tabla dinámica", body: "Selecciona tus datos, ve a Insertar → Tabla dinámica. Excel crea un lienzo con lista de campos." },
+          { title: "Filas y columnas", body: "Arrastra un campo a Filas (ej. Región) y otro a Columnas (ej. Mes) para dar forma a la cuadrícula." },
+          { title: "Valores", body: "Arrastra un campo numérico a Valores (ej. Ventas). Excel lo suma por defecto — cámbialo a Promedio, Contar, etc." },
+          { title: "Segmentaciones y actualizar", body: "Añade una Segmentación para filtrar con un clic. Al cambiar los datos, clic derecho → Actualizar." },
+        ],
+        pivotDemo: { note: "Arrastra campos a Filas (Región) y Columnas (Mes); Valores suma Ventas. El resultado es la tabla cruzada de abajo." },
+      },
+      id: {
+        title: "PivotTable",
+        intro: "Ringkas ribuan baris menjadi laporan rapi dengan menyeret bidang. Tanpa rumus.",
+        steps: [
+          { title: "Sisipkan PivotTable", body: "Pilih data, buka Sisipkan → PivotTable. Excel membuat kanvas kosong dengan daftar bidang." },
+          { title: "Baris & Kolom", body: "Seret bidang ke Baris (mis. Region) dan ke Kolom (mis. Bulan) untuk membentuk grid." },
+          { title: "Nilai", body: "Seret bidang angka ke Nilai (mis. Penjualan). Excel menjumlahkannya secara default — ubah ke Rata-rata, Hitung, dll." },
+          { title: "Slicer & segarkan", body: "Tambahkan Slicer untuk memfilter dengan klik. Bila data sumber berubah, klik kanan → Segarkan." },
+        ],
+        pivotDemo: { note: "Seret bidang ke Baris (Region) dan Kolom (Bulan); Nilai menjumlahkan Penjualan. Hasilnya adalah tabel silang di bawah." },
+      },
+      fr: {
+        title: "TCD (Tableaux croisés dynamiques)",
+        intro: "Résume des milliers de lignes en un rapport propre en glissant des champs. Aucune formule.",
+        steps: [
+          { title: "Insérer un TCD", body: "Sélectionne tes données, va dans Insertion → Tableau croisé dynamique. Excel crée une zone avec la liste des champs." },
+          { title: "Lignes et colonnes", body: "Glisse un champ dans Lignes (ex. Région) et un autre dans Colonnes (ex. Mois) pour façonner la grille." },
+          { title: "Valeurs", body: "Glisse un champ numérique dans Valeurs (ex. Ventes). Excel les additionne par défaut — change en Moyenne, Nb, etc." },
+          { title: "Segments et actualiser", body: "Ajoute un Segment pour filtrer d'un clic. Quand la source change, clic droit → Actualiser." },
+        ],
+        pivotDemo: { note: "Glisse les champs dans Lignes (Région) et Colonnes (Mois) ; Valeurs additionne Ventes. Le résultat est le tableau croisé ci-dessous." },
+      },
+    },
+  },
+  {
+    id: "charts",
+    icon: "📈",
+    type: "chart",
+    title: "Charts & Visualization",
+    intro: "Turn numbers into pictures. Pick the right chart and let Excel draw it.",
+    steps: [
+      { title: "Select data", body: "Highlight the numbers (and labels) you want to plot, then Insert → Chart." },
+      { title: "Pick a type", body: "Column for comparisons, Line for trends over time, Pie for parts of a whole, Bar for rankings." },
+      { title: "Titles & labels", body: "Add a chart title, axis titles, and data labels so the story is clear without the table." },
+      { title: "Refresh", body: "When the source data changes, the chart updates automatically. No redraw needed." },
+    ],
+    chartDemo: {
+      kind: "column",
+      cats: ["Jan", "Feb", "Mar", "Apr"],
+      series: [120, 200, 150, 180],
+      note: "A column chart compares values across months. Try switching the type below.",
+    },
+    i18n: {
+      es: {
+        title: "Gráficos y visualización",
+        intro: "Convierte números en imágenes. Elige el gráfico adecuado y Excel lo dibuja.",
+        steps: [
+          { title: "Seleccionar datos", body: "Resalta los números (y etiquetas) a graficar, luego Insertar → Gráfico." },
+          { title: "Elige un tipo", body: "Columna para comparar, Línea para tendencias, Circular para partes de un todo, Barra para rankings." },
+          { title: "Títulos y etiquetas", body: "Añade título, títulos de ejes y etiquetas de datos para que la historia sea clara." },
+          { title: "Actualizar", body: "Al cambiar los datos, el gráfico se actualiza solo. Sin redibujar." },
+        ],
+        chartDemo: { note: "Un gráfico de columnas compara valores por mes. Prueba a cambiar el tipo abajo." },
+      },
+      id: {
+        title: "Grafik & Visualisasi",
+        intro: "Ubah angka menjadi gambar. Pilih grafik yang tepat dan biarkan Excel menggambarnya.",
+        steps: [
+          { title: "Pilih data", body: "Sorot angka (dan label) yang ingin diplot, lalu Sisipkan → Grafik." },
+          { title: "Pilih tipe", body: "Kolom untuk perbandingan, Garis untuk tren, Pie untuk bagian dari keseluruhan, Bar untuk peringkat." },
+          { title: "Judul & label", body: "Tambahkan judul grafik, judul sumbu, dan label data agar cerita jelas tanpa tabel." },
+          { title: "Segarkan", body: "Bila data sumber berubah, grafik diperbarui otomatis. Tanpa menggambar ulang." },
+        ],
+        chartDemo: { note: "Grafik kolom membandingkan nilai antar bulan. Coba ubah tipe di bawah." },
+      },
+      fr: {
+        title: "Graphiques et visualisation",
+        intro: "Transforme des chiffres en images. Choisis le bon graphique et Excel le dessine.",
+        steps: [
+          { title: "Sélectionner les données", body: "Surligne les chiffres (et libellés) à tracer, puis Insertion → Graphique." },
+          { title: "Choisir un type", body: "Colonne pour comparer, Ligne pour les tendances, Camembert pour parts d'un tout, Barre pour classement." },
+          { title: "Titres et libellés", body: "Ajoute un titre, des titres d'axes et des étiquettes pour que l'histoire soit claire." },
+          { title: "Actualiser", body: "Quand la source change, le graphique se met à jour seul. Aucun redessin." },
+        ],
+        chartDemo: { note: "Un graphique en colonnes compare les valeurs par mois. Essaie de changer le type ci-dessous." },
+      },
+    },
+  },
+  {
+    id: "powerquery",
+    icon: "⚙️",
+    type: "powerquery",
+    title: "Power Query (Get & Transform)",
+    intro: "Clean and reshape data step by step. The steps replay automatically on refresh.",
+    steps: [
+      { title: "Get data", body: "Data → Get Data (Power Query). Connect to a table, file, or database. You land in the Query Editor." },
+      { title: "Filter & clean", body: "Remove rows, split columns, change types. Each action becomes a recorded step on the right." },
+      { title: "Transform", body: "Unpivot columns into tidy rows, merge queries, or group by to aggregate — all without formulas." },
+      { title: "Load & refresh", body: "Close & Load sends the result to a sheet. When the source changes, Refresh reruns every step." },
+    ],
+    pqDemo: {
+      before: { A1: "Product", B1: "2023", C1: "2024", A2: "A", B2: 10, C2: 12, A3: "B", B3: 20, C3: 25 },
+      after: { A1: "Product", B1: "Year", C1: "Sales", A2: "A", B2: 2023, C2: 10, A3: "A", B3: 2024, C3: 12, A4: "B", B4: 2023, C4: 20, A5: "B", B5: 2024, C5: 25 },
+      note: "Unpivot the year columns (2023, 2024) into tidy rows. The 'before' wide table becomes the 'after' long table — easier to chart and analyze.",
+    },
+    i18n: {
+      es: {
+        title: "Power Query (Obtener y transformar)",
+        intro: "Limpia y da forma a los datos paso a paso. Los pasos se repiten solos al actualizar.",
+        steps: [
+          { title: "Obtener datos", body: "Datos → Obtener datos (Power Query). Conéctate a una tabla, archivo o base de datos. Entras al Editor de consultas." },
+          { title: "Filtrar y limpiar", body: "Elimina filas, divide columnas, cambia tipos. Cada acción queda como paso registrado a la derecha." },
+          { title: "Transformar", body: "Anula la dinamización de columnas en filas ordenadas, combina consultas o agrupa para agregar — sin fórmulas." },
+          { title: "Cargar y actualizar", body: "Cerrar y cargar envía el resultado a una hoja. Al cambiar la fuente, Actualizar repite cada paso." },
+        ],
+        pqDemo: { note: "Anula la dinamización de las columnas de año (2023, 2024) en filas ordenadas. La tabla 'antes' ancha se vuelve la 'después' larga — más fácil de graficar." },
+      },
+      id: {
+        title: "Power Query (Get & Transform)",
+        intro: "Bersihkan dan bentuk ulang data selangkah demi selangkah. Langkah diputar ulang otomatis saat segarkan.",
+        steps: [
+          { title: "Ambil data", body: "Data → Ambil Data (Power Query). Sambungkan ke tabel, file, atau database. Kamu masuk ke Editor Kueri." },
+          { title: "Filter & bersihkan", body: "Hapus baris, pisahkan kolom, ubah tipe. Setiap aksi tercatat sebagai langkah di kanan." },
+          { title: "Transformasi", body: "Unpivot kolom menjadi baris rapi, gabungkan kueri, atau group by untuk agregasi — tanpa rumus." },
+          { title: "Muat & segarkan", body: "Tutup & Muat mengirim hasil ke sheet. Bila sumber berubah, Segarkan menjalankan ulang setiap langkah." },
+        ],
+        pqDemo: { note: "Unpivot kolom tahun (2023, 2024) menjadi baris rapi. Tabel 'sebelum' lebar menjadi tabel 'sesudah' panjang — lebih mudah di-grafik." },
+      },
+      fr: {
+        title: "Power Query (Get & Transform)",
+        intro: "Nettoie et restructure les données étape par étape. Les étapes se rejouent à l'actualisation.",
+        steps: [
+          { title: "Obtenir les données", body: "Données → Obtenir les données (Power Query). Connecte-toi à une table, un fichier ou une base. Tu arrives dans l'Éditeur de requête." },
+          { title: "Filtrer et nettoyer", body: "Supprime des lignes, sépare des colonnes, change les types. Chaque action devient une étape enregistrée à droite." },
+          { title: "Transformer", body: "Désactive la mise en colonnes en lignes ordonnées, fusionne des requêtes ou regroupe pour agréger — sans formules." },
+          { title: "Charger et actualiser", body: "Fermer et charger envoie le résultat dans une feuille. À la mise à jour, Actualiser rejoue chaque étape." },
+        ],
+        pqDemo: { note: "Désactive la mise en colonnes des années (2023, 2024) en lignes ordonnées. La table 'avant' large devient la table 'après' longue — plus facile à grapher." },
+      },
+    },
+  },
+];
