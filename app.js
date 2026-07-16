@@ -520,8 +520,15 @@ function matchesExpected(expected, actual) {
    STATE / PROGRESS
    ============================================================ */
 const STORAGE_KEY = "excelFormulaTrainer.v1";
+function todayKey() {
+  const d = new Date();
+  return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+}
 function defaultState() {
-  return { unlockedLevel: 1, xp: 0, practiceDone: {}, quizBest: {} };
+  return {
+    unlockedLevel: 1, xp: 0, practiceDone: {}, quizBest: {},
+    streak: 0, lastActive: null, badges: {}, dailyDone: null, sound: true,
+  };
 }
 function loadState() {
   try {
@@ -534,6 +541,62 @@ function saveState() {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
 }
 let state = loadState();
+
+/* ---------- Streak ---------- */
+function touchStreak() {
+  const key = todayKey();
+  if (state.lastActive === key) return;
+  if (state.lastActive) {
+    const prev = new Date(state.lastActive), cur = new Date(key);
+    const gap = Math.round((cur - prev) / 86400000);
+    state.streak = gap === 1 ? state.streak + 1 : 1;
+  } else {
+    state.streak = 1;
+  }
+  state.lastActive = key;
+  saveState();
+}
+
+/* ---------- Achievements ---------- */
+const BADGES = {
+  firstPractice: { icon: "🌱" },
+  firstQuiz: { icon: "🧠" },
+  streak3: { icon: "🔥" },
+  allLevels: { icon: "🏆" },
+  daily: { icon: "⭐" },
+};
+function awardBadge(id) {
+  if (state.badges[id]) return false;
+  state.badges[id] = todayKey();
+  saveState();
+  return true;
+}
+function checkStaticBadges() {
+  if (Object.keys(state.practiceDone).length > 0) awardBadge("firstPractice");
+  if (Object.keys(state.quizBest).length > 0) awardBadge("firstQuiz");
+  if (state.streak >= 3) awardBadge("streak3");
+  if (state.unlockedLevel > LEVELS.length) awardBadge("allLevels");
+}
+
+/* ---------- Sound (WebAudio, no files) ---------- */
+let audioCtx = null;
+function playSound(type) {
+  if (!state.sound) return;
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    const notes = { success: [523.25, 659.25, 783.99], error: [311.13, 233.08], win: [523.25, 659.25, 783.99, 1046.5] }[type] || [523.25];
+    notes.forEach((f, i) => {
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.type = "triangle"; o.frequency.value = f;
+      const t0 = audioCtx.currentTime + i * 0.12;
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.exponentialRampToValueAtTime(0.18, t0 + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.22);
+      o.connect(g); g.connect(audioCtx.destination);
+      o.start(t0); o.stop(t0 + 0.24);
+    });
+  } catch (e) {}
+}
 
 /* ============================================================
    DOM HELPERS
@@ -608,15 +671,26 @@ const root = document.getElementById("app");
 function levelById(id) { return LEVELS.find((l) => l.id === id); }
 
 function render() {
+  touchStreak();
+  checkStaticBadges();
   clear(root);
   root.appendChild(renderTopBar());
   root.appendChild(renderLevelPicker());
+  if (currentTab === "learn") root.appendChild(renderDailyStrip());
   root.appendChild(renderTabs());
   const main = el("main", { class: "main" });
-  if (currentTab === "learn") main.appendChild(renderLearn());
+  if (currentTab === "learn") { main.appendChild(renderBadges()); main.appendChild(renderLearn()); }
   else if (currentTab === "practice") main.appendChild(renderPractice());
   else main.appendChild(renderQuiz());
   root.appendChild(main);
+  root.appendChild(renderBottomNav());
+  if (!document.querySelector(".cheat-fab")) {
+    document.body.appendChild(el("button", {
+      class: "cheat-fab", text: "📖 " + t("cheatsheet.open"),
+      "aria-label": t("cheatsheet.open"),
+      on: { click: openCheatSheet },
+    }));
+  }
 }
 
 function renderTopBar() {
@@ -638,10 +712,17 @@ function renderTopBar() {
           el("strong", { text: t("level.chip", { id: lvl.id, name: lvlName(lvl) }) }),
         ]),
       ]),
+      el("div", { class: "streakchip", title: t("streak.label") }, [
+        el("span", { class: "streakchip__icon", text: state.streak > 0 ? "🔥" : "💤" }),
+        el("span", { class: "streakchip__text", text: state.streak > 0 ? String(state.streak) : "0" }),
+      ]),
       el("div", { class: "xp" }, [
         el("div", { class: "xp__row" }, [
           el("span", { class: "xp__label", text: t("xp", { n: state.xp }) }),
-          el("button", { class: "ghost-btn", title: theme === "dark" ? t("theme.toLight") : t("theme.toDark"), "aria-label": theme === "dark" ? t("theme.toLight") : t("theme.toDark"), on: { click: toggleTheme }, text: theme === "dark" ? "☀️" : "🌙" }),
+          el("div", { class: "topbar__icons" }, [
+            el("button", { class: "ghost-btn", title: state.sound ? t("sound.on") : t("sound.off"), "aria-label": state.sound ? t("sound.on") : t("sound.off"), on: { click: () => { state.sound = !state.sound; saveState(); renderTopBarInto(); } }, text: state.sound ? "🔊" : "🔇" }),
+            el("button", { class: "ghost-btn", title: theme === "dark" ? t("theme.toLight") : t("theme.toDark"), "aria-label": theme === "dark" ? t("theme.toLight") : t("theme.toDark"), on: { click: toggleTheme }, text: theme === "dark" ? "☀️" : "🌙" }),
+          ]),
         ]),
         el("div", { class: "xp__bar" }, [el("div", { class: "xp__fill", style: "width:" + xpPct + "%" })]),
       ]),
@@ -681,6 +762,174 @@ function renderTabs() {
     }, [label]));
   }
   return nav;
+}
+
+function renderBottomNav() {
+  const items = [
+    ["learn", "📚", t("nav.learn")],
+    ["practice", "🧪", t("nav.practice")],
+    ["quiz", "🎯", t("nav.quiz")],
+  ];
+  const nav = el("nav", { class: "bottomnav", "aria-label": "Primary" });
+  for (const [id, icon, label] of items) {
+    nav.appendChild(el("button", {
+      class: "bottomnav__btn" + (currentTab === id ? " is-active" : ""),
+      on: { click: () => { currentTab = id; render(); } },
+    }, [
+      el("span", { class: "bottomnav__icon", text: icon }),
+      el("span", { class: "bottomnav__label", text: label }),
+    ]));
+  }
+  return nav;
+}
+
+function renderBadges() {
+  const wrap = el("section", { class: "badges" });
+  wrap.appendChild(el("h2", { class: "badges__title", text: t("badges.title") }));
+  const row = el("div", { class: "badges__row" });
+  const owned = Object.keys(state.badges);
+  if (!owned.length) {
+    wrap.appendChild(el("p", { class: "muted", text: t("badges.none") }));
+    return wrap;
+  }
+  for (const id of Object.keys(BADGES)) {
+    if (!state.badges[id]) continue;
+    row.appendChild(el("div", { class: "badge", title: t("badge." + id) }, [
+      el("span", { class: "badge__icon", text: BADGES[id].icon }),
+      el("span", { class: "badge__label", text: t("badge." + id) }),
+    ]));
+  }
+  wrap.appendChild(row);
+  return wrap;
+}
+
+function renderDailyStrip() {
+  const wrap = el("section", { class: "daily" });
+  const done = state.dailyDone === todayKey();
+  wrap.appendChild(el("div", { class: "daily__head" }, [
+    el("h2", { class: "daily__title", text: t("daily.title") }),
+    done ? null : el("button", { class: "btn btn--primary daily__btn", text: t("daily.start"), on: { click: startDailyChallenge } }),
+  ]));
+  wrap.appendChild(el("p", { class: "muted", text: done ? t("daily.done") : t("daily.intro") }));
+  return wrap;
+}
+
+function startDailyChallenge() {
+  const allWrite = [];
+  for (const lvl of LEVELS) for (const q of (lvl.quizzes || [])) if (q.type === "write") allWrite.push({ lvl, q });
+  const pool = allWrite.length >= 5 ? allWrite : LEVELS.flatMap((l) => (l.quizzes || []).map((q) => ({ lvl: l, q })));
+  const picks = [];
+  const used = new Set();
+  while (picks.length < Math.min(5, pool.length)) {
+    const i = Math.floor(Math.random() * pool.length);
+    if (used.has(i)) continue;
+    used.add(i); picks.push(pool[i]);
+  }
+  currentTab = "quiz";
+  render();
+  // Build a synthetic daily quiz on top of the first picked level's quiz view.
+  runDailyQuiz(picks);
+}
+
+function runDailyQuiz(picks) {
+  const stage = root.querySelector(".main");
+  clear(stage);
+  let index = 0, correct = 0;
+  const answered = new Array(picks.length).fill(false);
+  const questions = picks.map((p) => Object.assign({ _lvl: p.lvl }, L(p.q)));
+  function renderQ() {
+    clear(stage);
+    const item = questions[index];
+    const q = item.q;
+    const card = el("div", { class: "qcard" });
+    card.appendChild(el("div", { class: "qcard__meta", text: t("question", { cur: index + 1, total: questions.length }) }));
+    card.appendChild(el("p", { class: "qcard__prompt", text: q.prompt }));
+    const bounds = gridBounds(q.grid);
+    const table = buildGridTable(q.grid, bounds, q.targetCell);
+    const fb = el("div", { class: "feedback", "aria-live": "polite" });
+    const input = el("input", { class: "formula-input", type: "text", placeholder: "=FORMULA(...)", "aria-label": t("quiz.yourFormula") });
+    const submit = el("button", { class: "btn btn--primary", text: t("submit") });
+    const submitFn = () => {
+      const raw = input.value.trim();
+      if (!raw) { showFeedback(fb, t("typeFirst"), "warn"); return; }
+      let computed;
+      try { computed = evaluateFormula(raw, q.grid); }
+      catch (e) { showFeedback(fb, t("invalid", { msg: e.message || "Invalid formula" }), "error"); return; }
+      if (matchesExpected(q.expected, computed)) {
+        showFeedback(fb, t("correct.write", { val: formatValue(computed) }), "ok");
+        playSound("success"); markCorrect();
+      } else {
+        showFeedback(fb, t("wrong", { got: formatValue(computed), exp: formatValue(q.expected) }), "error");
+        playSound("error");
+      }
+    };
+    submit.addEventListener("click", submitFn);
+    input.addEventListener("keydown", (e) => { if (e.key === "Enter") submitFn(); });
+    card.appendChild(el("div", { class: "grid-wrap" }, [table]));
+    card.appendChild(el("div", { class: "practice__controls" }, [
+      el("label", { class: "practice__label" }, [q.targetCell + ":", input]),
+      el("div", { class: "btn-row" }, [submit]), fb,
+    ]));
+    stage.appendChild(card);
+    stage.appendChild(el("div", { class: "btn-row quiz__nav" }, [
+      index > 0 ? el("button", { class: "btn btn--ghost", text: t("back"), on: { click: () => { index--; renderQ(); } } }) : null,
+      el("button", { class: "btn btn--primary", text: index === questions.length - 1 ? t("finish") : t("next"), on: { click: () => { if (index < questions.length - 1) { index++; renderQ(); } else finishDaily(); } } }),
+    ]));
+  }
+  function markCorrect() { if (!answered[index]) { answered[index] = true; correct++; } }
+  function finishDaily() {
+    const score = correct / questions.length;
+    const passed = score >= 0.6;
+    clear(stage);
+    if (passed) {
+      touchStreak();
+      const fresh = awardBadge("daily");
+      saveState();
+      playSound("win");
+      if (fresh) showBadgeToast("daily");
+      state.dailyDone = todayKey();
+      saveState();
+    }
+    stage.appendChild(el("div", { class: "result" + (passed ? " is-pass" : " is-fail") }, [
+      el("div", { class: "result__score", text: Math.round(score * 100) + "%" }),
+      el("h3", { text: passed ? "🌟 " + t("pass.title") : t("fail.title") }),
+      el("p", { class: "muted", text: passed ? t("daily.done") : t("fail.msg", { pct: 60 }) }),
+      el("div", { class: "btn-row" }, [
+        el("button", { class: "btn btn--primary", text: t("letsGo"), on: { click: () => { currentTab = "learn"; render(); } } }),
+      ]),
+    ]));
+    renderTopBarInto();
+  }
+  renderQ();
+}
+
+function openCheatSheet() {
+  const wrap = el("div", { class: "sheet", onclick: (e) => { if (e.target === wrap) wrap.remove(); } });
+  const panel = el("div", { class: "sheet__panel" });
+  panel.appendChild(el("div", { class: "sheet__head" }, [
+    el("h2", { text: t("cheatsheet.title") }),
+    el("button", { class: "ghost-btn", text: "✕", "aria-label": t("cheatsheet.close"), on: { click: () => wrap.remove() } }),
+  ]));
+  const list = el("div", { class: "sheet__list" });
+  for (const lvl of LEVELS) for (const f of lvl.formulas.map(L)) {
+    list.appendChild(el("div", { class: "sheet__item" }, [
+      el("code", { class: "sheet__name", text: f.name }),
+      el("code", { class: "sheet__syntax", text: f.syntax }),
+    ]));
+  }
+  panel.appendChild(list);
+  wrap.appendChild(panel);
+  document.body.appendChild(wrap);
+}
+
+function showBadgeToast(id) {
+  const toast = el("div", { class: "toast" }, [
+    el("span", { class: "toast__icon", text: BADGES[id].icon }),
+    el("span", { text: "🏅 " + t("badge." + id) }),
+  ]);
+  document.body.appendChild(toast);
+  requestAnimationFrame(() => toast.classList.add("is-show"));
+  setTimeout(() => { toast.classList.remove("is-show"); setTimeout(() => toast.remove(), 400); }, 3200);
 }
 
 /* ---------- Learn ---------- */
@@ -784,10 +1033,14 @@ function renderScenario(stage, lvl, scenario) {
     resultLine.textContent = scenario.targetCell + " = " + (raw.startsWith("=") ? raw : "=" + raw) + "  →  " + formatted;
     if (matchesExpected(scenario.expected, computed)) {
       showFeedback(feedback, t("correct"), "ok");
+      playSound("success");
       if (!state.practiceDone[scenario.id]) {
         state.practiceDone[scenario.id] = true;
         state.xp += XP_PER_PRACTICE;
+        touchStreak();
+        const fresh = awardBadge("firstPractice");
         saveState();
+        if (fresh) showBadgeToast("firstPractice");
       }
     } else {
       showFeedback(feedback, t("notQuite", { got: formatted, exp: formatValue(scenario.expected) }), "error");
@@ -863,9 +1116,11 @@ function renderQuiz() {
         catch (e) { showFeedback(fb, t("invalid", { msg: e.message || "Invalid formula" }), "error"); return; }
         if (matchesExpected(q.expected, computed)) {
           showFeedback(fb, t("correct.write", { val: formatValue(computed) }), "ok");
+          playSound("success");
           markCorrect();
         } else {
           showFeedback(fb, t("wrong", { got: formatValue(computed), exp: formatValue(q.expected) }), "error");
+          playSound("error");
         }
       };
       submit.addEventListener("click", submitFn);
@@ -889,8 +1144,8 @@ function renderQuiz() {
     answered[index] = true;
     const q = questions[index];
     const isRight = oi === q.answer;
-    if (isRight) { correct++; btn.classList.add("is-correct"); }
-    else { btn.classList.add("is-wrong"); opts.children[q.answer].classList.add("is-correct"); }
+    if (isRight) { correct++; btn.classList.add("is-correct"); playSound("success"); }
+    else { btn.classList.add("is-wrong"); opts.children[q.answer].classList.add("is-correct"); playSound("error"); }
     Array.from(opts.children).forEach((c) => (c.disabled = true));
   }
   function markCorrect() { if (!answered[index]) { answered[index] = true; correct++; } }
@@ -904,14 +1159,20 @@ function renderQuiz() {
     clear(stage);
     const prevBest = state.quizBest[lvl.id] || 0;
     if (score > prevBest) state.quizBest[lvl.id] = score;
-    if (passed && lvl.id === state.unlockedLevel && state.unlockedLevel < LEVELS.length) {
-      state.unlockedLevel++;
-      selectedLevelId = state.unlockedLevel;
+    if (passed) {
+      touchStreak();
+      const fresh = awardBadge("firstQuiz");
       state.xp += XP_PER_QUIZ;
       saveState();
-      showCelebration(levelById(state.unlockedLevel));
-    } else if (passed) {
-      state.xp += XP_PER_QUIZ;
+      checkStaticBadges();
+      playSound("win");
+      if (fresh) showBadgeToast("firstQuiz");
+      if (lvl.id === state.unlockedLevel && state.unlockedLevel < LEVELS.length) {
+        state.unlockedLevel++;
+        selectedLevelId = state.unlockedLevel;
+        showCelebration(levelById(state.unlockedLevel));
+      }
+    } else {
       saveState();
     }
     stage.appendChild(el("div", { class: "result" + (passed ? " is-pass" : " is-fail") }, [
@@ -983,6 +1244,7 @@ function renderTopBarInto() {
   if (oldPick) oldPick.replaceWith(renderLevelPicker());
 }
 function showCelebration(lvl) {
+  playSound("win");
   const overlay = el("div", { class: "celebrate" }, [
     el("div", { class: "celebrate__card" }, [
       el("div", { class: "celebrate__emoji", text: "🎊" }),

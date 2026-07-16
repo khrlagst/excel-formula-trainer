@@ -432,3 +432,147 @@ code { font-family: var(--mono); }
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
+
+/* ============================================================
+   ENGAGEMENT + MOBILE ENHANCEMENTS
+   ============================================================ */
+
+/* Streak chip */
+.streakchip {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  background: var(--warn-bg); color: var(--warn);
+  padding: 0.4rem 0.7rem; border-radius: 999px; font-weight: 700; font-size: 0.9rem;
+}
+.streakchip__icon { font-size: 1rem; }
+.topbar__icons { display: inline-flex; gap: 0.4rem; }
+
+/* Daily strip */
+.daily {
+  background: linear-gradient(135deg, rgba(79,70,229,0.10), rgba(6,182,212,0.10));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.15rem;
+  margin-top: 1rem;
+}
+.daily__head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.daily__title { font-size: 1.2rem; margin: 0; }
+.daily__btn { white-space: nowrap; }
+
+/* Badges */
+.badges { margin-top: 1.25rem; }
+.badges__title { font-size: 1.1rem; margin-bottom: 0.6rem; }
+.badges__row { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.badge {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 999px; padding: 0.4rem 0.85rem;
+  box-shadow: var(--shadow-sm);
+  animation: popIn 0.35s ease;
+}
+.badge__icon { font-size: 1.2rem; }
+.badge__label { font-size: 0.85rem; font-weight: 600; }
+
+/* Bottom navigation (mobile-first; shown on small screens) */
+.bottomnav { display: none; }
+
+/* Cheat sheet drawer */
+.sheet {
+  position: fixed; inset: 0; z-index: 120;
+  background: rgba(15,19,32,0.55);
+  display: flex; justify-content: flex-end;
+  animation: fadeIn 0.2s ease;
+  backdrop-filter: blur(2px);
+}
+.sheet__panel {
+  width: min(420px, 92vw); height: 100%;
+  background: var(--surface); overflow-y: auto;
+  padding: 1.25rem; box-shadow: var(--shadow-lg);
+  animation: slideInRight 0.25s ease;
+}
+.sheet__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+.sheet__head h2 { font-size: 1.2rem; }
+.sheet__list { display: flex; flex-direction: column; gap: 0.5rem; }
+.sheet__item { display: flex; flex-direction: column; gap: 0.15rem; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.6rem 0.75rem; background: var(--surface-2); }
+.sheet__name { font-weight: 700; color: var(--brand); }
+.sheet__syntax { font-size: 0.85rem; color: var(--text); }
+
+/* Badge toast */
+.toast {
+  position: fixed; left: 50%; bottom: 90px; transform: translateX(-50%) translateY(20px);
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 999px; padding: 0.6rem 1.1rem;
+  box-shadow: var(--shadow-lg); font-weight: 600;
+  display: flex; align-items: center; gap: 0.5rem;
+  opacity: 0; pointer-events: none; z-index: 130;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+.toast.is-show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast__icon { font-size: 1.2rem; }
+
+/* Floating cheat-sheet button */
+.cheat-fab {
+  position: fixed; right: 1rem; bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  z-index: 90;
+  border: none; border-radius: 999px;
+  background: var(--brand-grad); color: #fff;
+  padding: 0.7rem 1.1rem; font-weight: 700; cursor: pointer;
+  box-shadow: var(--shadow-md);
+}
+
+@keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+/* ============================================================
+   MOBILE-FIRST RESPONSIVE
+   ============================================================ */
+@media (max-width: 760px) {
+  #app { padding: 0.5rem; padding-bottom: 5.5rem; }
+
+  .topbar { padding: 0.75rem; gap: 0.6rem; }
+  .brand__title { font-size: 1.1rem; }
+  .topbar__right { width: 100%; flex-wrap: wrap; gap: 0.5rem; }
+  .levelchip, .streakchip, .xp { flex: 1 1 auto; min-width: 96px; }
+  .lang-select { width: 100%; }
+
+  /* Hide the in-flow tab bar; bottom nav takes over */
+  .tabs { display: none; }
+
+  .bottomnav {
+    display: flex; position: fixed; left: 0; right: 0; bottom: 0;
+    z-index: 100;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    box-shadow: 0 -4px 20px rgba(16,24,40,0.12);
+    padding: 0.4rem 0.25rem calc(0.4rem + env(safe-area-inset-bottom, 0px));
+  }
+  .bottomnav__btn {
+    flex: 1; border: none; background: transparent; color: var(--muted);
+    display: flex; flex-direction: column; align-items: center; gap: 0.15rem;
+    padding: 0.45rem 0; cursor: pointer; border-radius: var(--radius-sm);
+    font-size: 0.7rem; font-weight: 600;
+  }
+  .bottomnav__icon { font-size: 1.4rem; line-height: 1; }
+  .bottomnav__btn.is-active { color: var(--brand); background: var(--surface-2); }
+
+  .cards { grid-template-columns: 1fr; }
+  .scenario-btn { width: 100%; text-align: left; }
+  .practice__label { flex-direction: column; align-items: stretch; }
+  .formula-input { width: 100%; min-width: 0; font-size: 1.05rem; }
+  .btn { padding: 0.7rem 1rem; }            /* larger tap targets */
+  .option { padding: 1rem 1.1rem; font-size: 1.02rem; }
+  .grid th, .grid td { min-width: 52px; height: 40px; font-size: 1rem; padding: 0 0.45rem; }
+  .celebrate__card { padding: 1.5rem 1.25rem; margin: 1rem; width: calc(100% - 2rem); }
+  .result { padding: 1.5rem 1.25rem; }
+  .daily__btn { width: 100%; }
+  .toast { bottom: 88px; }
+}
+
+@media (max-width: 400px) {
+  .levelpill__name { display: none; }
+  .levelpill { padding: 0.45rem 0.65rem; }
+  .brand__sub { display: none; }
+}
+
+/* Touch: remove hover-only affordances on coarse pointers */
+@media (hover: none) {
+  .card:hover, .option:hover, .btn:hover, .levelpill:hover, .scenario-btn:hover { transform: none; }
+}
