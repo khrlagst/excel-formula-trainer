@@ -18,6 +18,7 @@ const LEVELS = [
         description: "Adds all the numbers in a range or list of arguments.",
         example: "=SUM(A1:A4)",
         result: "Adds the values in cells A1 through A4.",
+        demo: { grid: { A1: 10, A2: 20, A3: 30, A4: 40 }, targetCell: "A5", formula: "=SUM(A1:A4)" },
         i18n: {
           es: { description: "Suma todos los números de un rango o lista de argumentos.", result: "Suma los valores de las celdas A1 a A4." },
           id: { description: "Menjumlahkan semua angka dalam sebuah rentang atau daftar argumen.", result: "Menjumlahkan nilai dari sel A1 hingga A4." },
@@ -30,6 +31,7 @@ const LEVELS = [
         description: "Returns the arithmetic mean of the numbers provided.",
         example: "=AVERAGE(B2:B6)",
         result: "The mean of the values in B2 through B6.",
+        demo: { grid: { B2: 80, B3: 90, B4: 70, B5: 60, B6: 100 }, targetCell: "B7", formula: "=AVERAGE(B2:B6)" },
         i18n: {
           es: { description: "Devuelve la media aritmética de los números proporcionados.", result: "La media de los valores de B2 a B6." },
           id: { description: "Mengembalikan rata-rata aritmetika dari angka-angka yang diberikan.", result: "Rata-rata dari nilai-nilai di B2 hingga B6." },
@@ -42,6 +44,7 @@ const LEVELS = [
         description: "Returns the smallest (lowest) number in a set.",
         example: "=MIN(C1:C10)",
         result: "The lowest value in C1 through C10.",
+        demo: { grid: { C1: 5, C2: 12, C3: 3, C4: 9 }, targetCell: "C5", formula: "=MIN(C1:C4)" },
         i18n: {
           es: { description: "Devuelve el número más pequeño (menor) de un conjunto.", result: "El valor más bajo de C1 a C10." },
           id: { description: "Mengembalikan angka terkecil dari satu kumpulan.", result: "Nilai terendah dari C1 hingga C10." },
@@ -54,6 +57,7 @@ const LEVELS = [
         description: "Returns the largest (highest) number in a set.",
         example: "=MAX(C1:C10)",
         result: "The highest value in C1 through C10.",
+        demo: { grid: { C1: 5, C2: 12, C3: 3, C4: 9 }, targetCell: "C5", formula: "=MAX(C1:C4)" },
         i18n: {
           es: { description: "Devuelve el número más grande (mayor) de un conjunto.", result: "El valor más alto de C1 a C10." },
           id: { description: "Mengembalikan angka terbesar dari satu kumpulan.", result: "Nilai tertinggi dari C1 hingga C10." },
@@ -66,6 +70,7 @@ const LEVELS = [
         description: "Counts how many cells contain numbers (ignores text).",
         example: "=COUNT(A1:A8)",
         result: "The number of numeric cells in A1 through A8.",
+        demo: { grid: { A1: 10, A2: "x", A3: 20, A4: "y", A5: 30 }, targetCell: "A6", formula: "=COUNT(A1:A5)" },
         i18n: {
           es: { description: "Cuenta cuántas celdas contienen números (ignora el texto).", result: "La cantidad de celdas numéricas de A1 a A8." },
           id: { description: "Menghitung berapa banyak sel yang berisi angka (mengabaikan teks).", result: "Jumlah sel bernilai angka dari A1 hingga A8." },
@@ -78,6 +83,7 @@ const LEVELS = [
         description: "Counts how many cells are not empty (numbers or text).",
         example: "=COUNTA(A1:A8)",
         result: "The number of non-empty cells in A1 through A8.",
+        demo: { grid: { A1: "Ann", A2: 10, A3: "", A4: "Bo", A5: 20 }, targetCell: "A6", formula: "=COUNTA(A1:A5)" },
         i18n: {
           es: { description: "Cuenta cuántas celdas no están vacías (números o texto).", result: "La cantidad de celdas no vacías de A1 a A8." },
           id: { description: "Menghitung berapa banyak sel yang tidak kosong (angka atau teks).", result: "Jumlah sel tidak kosong dari A1 hingga A8." },
@@ -226,6 +232,7 @@ const LEVELS = [
         description: "Tests a condition and returns one value if TRUE, another if FALSE.",
         example: '=IF(B2>=60, "Pass", "Fail")',
         result: 'Returns "Pass" when B2 is 60 or more, otherwise "Fail".',
+        demo: { grid: { A1: "Score", B1: "Result", A2: 72, B2: "" }, targetCell: "B2", formula: '=IF(A2>=60, "Pass", "Fail")' },
         i18n: {
           es: {
             description: "Evalúa una condición y devuelve un valor si es VERDADERO y otro si es FALSO.",
@@ -250,6 +257,7 @@ const LEVELS = [
         description: "Used inside IF to compare values. = equals, <> not equal.",
         example: "=IF(A1>B1, A1, B1)",
         result: "Returns the larger of A1 and B1.",
+        demo: { grid: { A1: 15, B1: 27, C1: "" }, targetCell: "C1", formula: "=IF(A1>B1, A1, B1)" },
         i18n: {
           es: {
             name: "Operadores de comparación",
@@ -274,6 +282,7 @@ const LEVELS = [
         description: "Combine conditions. AND needs all true; OR needs at least one.",
         example: '=IF(AND(B2>=60, C2>=60), "Pass", "Fail")',
         result: 'Passes only when both B2 and C2 are 60 or more.',
+        demo: { grid: { A1: "Math", B1: "Sci", C1: "Result", A2: 70, B2: 55, C2: "" }, targetCell: "C2", formula: '=IF(AND(A2>=60, B2>=60), "Pass", "Fail")' },
         i18n: {
           es: {
             description: "Combina condiciones. AND requiere todas verdaderas; OR al menos una.",
@@ -298,6 +307,7 @@ const LEVELS = [
         description: "Catches errors and returns a fallback value instead of an error.",
         example: '=IFERROR(A1/B1, "Error")',
         result: 'Returns the division, or "Error" if it fails (e.g. divide by zero).',
+        demo: { grid: { A1: "Num", B1: "Den", C1: "Result", A2: 10, B2: 0, C2: "" }, targetCell: "C2", formula: '=IFERROR(A2/B2, "Error")' },
         i18n: {
           es: {
             description: "Captura errores y devuelve un valor alternativo en lugar de un error.",
@@ -485,6 +495,7 @@ const LEVELS = [
         description: "Joins two or more text strings into one.",
         example: '=CONCAT(A2, " ", B2)',
         result: "Combines first and last name with a space.",
+        demo: { grid: { A1: "First", B1: "Last", C1: "Full", A2: "Ada", B2: "Lovelace", C2: "" }, targetCell: "C2", formula: '=CONCAT(A2, " ", B2)' },
         i18n: {
           es: { description: "Une dos o más cadenas de texto en una sola.", result: "Combina el nombre y apellido con un espacio." },
           id: { description: "Menggabungkan dua atau lebih teks menjadi satu.", result: "Menggabungkan nama depan dan belakang dengan spasi." },
@@ -497,6 +508,7 @@ const LEVELS = [
         description: "The & operator also joins text. Often quicker than CONCAT.",
         example: '=A2 & " " & B2',
         result: "Same result as CONCAT above.",
+        demo: { grid: { A1: "First", B1: "Last", C1: "Full", A2: "Ada", B2: "Lovelace", C2: "" }, targetCell: "C2", formula: '=A2 & " " & B2' },
         i18n: {
           es: { description: "El operador & también une texto. A menudo más rápido que CONCAT.", result: "Mismo resultado que CONCAT arriba." },
           id: { description: "Operator & juga menggabungkan teks. Sering lebih cepat dari CONCAT.", result: "Hasil yang sama dengan CONCAT di atas." },
@@ -509,6 +521,7 @@ const LEVELS = [
         description: "Returns the first N characters from the left of a text.",
         example: "=LEFT(A2, 3)",
         result: "The first 3 characters of A2.",
+        demo: { grid: { A1: "Phone", B1: "Area", A2: "4155551234", B2: "" }, targetCell: "B2", formula: "=LEFT(A2, 3)" },
         i18n: {
           es: { description: "Devuelve los primeros N caracteres desde la izquierda del texto.", result: "Los primeros 3 caracteres de A2." },
           id: { description: "Mengembalikan N karakter pertama dari kiri suatu teks.", result: "3 karakter pertama dari A2." },
@@ -521,6 +534,7 @@ const LEVELS = [
         description: "Returns the last N characters from the right of a text.",
         example: "=RIGHT(A2, 2)",
         result: "The last 2 characters of A2.",
+        demo: { grid: { A1: "Phone", B1: "End", A2: "4155551234", B2: "" }, targetCell: "B2", formula: "=RIGHT(A2, 4)" },
         i18n: {
           es: { description: "Devuelve los últimos N caracteres desde la derecha del texto.", result: "Los últimos 2 caracteres de A2." },
           id: { description: "Mengembalikan N karakter terakhir dari kanan suatu teks.", result: "2 karakter terakhir dari A2." },
@@ -533,6 +547,7 @@ const LEVELS = [
         description: "Converts text to all uppercase or all lowercase.",
         example: "=UPPER(A2)",
         result: "A2 converted to uppercase.",
+        demo: { grid: { A1: "Name", B1: "Upper", A2: "ada", B2: "" }, targetCell: "B2", formula: "=UPPER(A2)" },
         i18n: {
           es: { description: "Convierte el texto a mayúsculas o minúsculas.", result: "A2 convertido a mayúsculas." },
           id: { description: "Mengubah teks menjadi semua huruf besar atau semua huruf kecil.", result: "A2 diubah menjadi huruf besar." },
@@ -545,6 +560,7 @@ const LEVELS = [
         description: "Returns the number of characters in a text.",
         example: "=LEN(A2)",
         result: "The length of the text in A2.",
+        demo: { grid: { A1: "Word", B1: "Length", A2: "Excel", B2: "" }, targetCell: "B2", formula: "=LEN(A2)" },
         i18n: {
           es: { description: "Devuelve la cantidad de caracteres de un texto.", result: "La longitud del texto en A2." },
           id: { description: "Mengembalikan jumlah karakter dalam suatu teks.", result: "Panjang teks di A2." },
@@ -557,6 +573,7 @@ const LEVELS = [
         description: "Returns a substring from the middle of text, starting at a position.",
         example: "=MID(A2, 2, 3)",
         result: "3 characters of A2 starting at position 2.",
+        demo: { grid: { A1: "Code", B1: "Mid", A2: "ABCD", B2: "" }, targetCell: "B2", formula: "=MID(A2, 2, 2)" },
         i18n: {
           es: { description: "Devuelve una subcadena desde el medio del texto, a partir de una posición.", result: "3 caracteres de A2 empezando en la posición 2." },
           id: { description: "Mengembalikan subteks dari tengah teks, mulai dari posisi tertentu.", result: "3 karakter A2 mulai dari posisi 2." },
@@ -569,6 +586,7 @@ const LEVELS = [
         description: "Removes extra spaces from text, leaving single spaces between words.",
         example: '=TRIM(A2)',
         result: "A2 with extra spaces removed.",
+        demo: { grid: { A1: "Raw", B1: "Clean", A2: "  hi   there  ", B2: "" }, targetCell: "B2", formula: '=TRIM(A2)' },
         i18n: {
           es: { description: "Elimina los espacios extras del texto, dejando espacios simples.", result: "A2 con los espacios extras eliminados." },
           id: { description: "Menghapus spasi berlebih dari teks, menyisakan spasi tunggal di antara kata.", result: "A2 dengan spasi berlebih dihapus." },
@@ -581,6 +599,7 @@ const LEVELS = [
         description: "Capitalizes the first letter of each word in text.",
         example: '=PROPER(A2)',
         result: "A2 with each word capitalized.",
+        demo: { grid: { A1: "Name", B1: "Proper", A2: "ada lovelace", B2: "" }, targetCell: "B2", formula: '=PROPER(A2)' },
         i18n: {
           es: { description: "Pone en mayúscula la primera letra de cada palabra.", result: "A2 con cada palabra en mayúscula." },
           id: { description: "Membuat huruf pertama tiap kata menjadi kapital.", result: "A2 dengan setiap kata kapital." },
@@ -593,6 +612,7 @@ const LEVELS = [
         description: "Replaces existing text with new text inside a string.",
         example: '=SUBSTITUTE(A2, "cat", "dog")',
         result: "A2 with every 'cat' changed to 'dog'.",
+        demo: { grid: { A1: "Text", B1: "New", A2: "the cat sat", B2: "" }, targetCell: "B2", formula: '=SUBSTITUTE(A2, "cat", "dog")' },
         i18n: {
           es: { description: "Reemplaza un texto existente por uno nuevo dentro de una cadena.", result: "A2 con cada 'cat' cambiado por 'dog'." },
           id: { description: "Mengganti teks tertentu dengan teks baru di dalam suatu string.", result: "A2 dengan setiap 'cat' diubah menjadi 'dog'." },
@@ -801,6 +821,7 @@ const LEVELS = [
         description: "Rounds a number to a given number of digits. 0 = whole number, 2 = cents.",
         example: "=ROUND(3.14159, 2)",
         result: "3.14",
+        demo: { grid: { A1: "Value", B1: "Rounded", A2: 3.14159, B2: "" }, targetCell: "B2", formula: "=ROUND(A2, 2)" },
         i18n: {
           es: { description: "Redondea un número a una cantidad de decimales. 0 = entero, 2 = centavos.", result: "3.14" },
           id: { description: "Membulatkan angka ke sejumlah digit. 0 = bilangan bulat, 2 = sen.", result: "3.14" },
@@ -813,6 +834,7 @@ const LEVELS = [
         description: "Returns the absolute (always positive) value of a number.",
         example: "=ABS(-7)",
         result: "7",
+        demo: { grid: { A1: "Num", B1: "Abs", A2: -42, B2: "" }, targetCell: "B2", formula: "=ABS(A2)" },
         i18n: {
           es: { description: "Devuelve el valor absoluto (siempre positivo) de un número.", result: "7" },
           id: { description: "Mengembalikan nilai absolut (selalu positif) dari sebuah angka.", result: "7" },
@@ -825,6 +847,7 @@ const LEVELS = [
         description: "Rounds a number down to the nearest whole number.",
         example: "=INT(4.9)",
         result: "4",
+        demo: { grid: { A1: "Value", B1: "Int", A2: 7.9, B2: "" }, targetCell: "B2", formula: "=INT(A2)" },
         i18n: {
           es: { description: "Redondea un número hacia abajo al entero más cercano.", result: "4" },
           id: { description: "Membulatkan angka ke bawah ke bilangan bulat terdekat.", result: "4" },
@@ -837,6 +860,7 @@ const LEVELS = [
         description: "Rounds a number up, away from zero.",
         example: "=ROUNDUP(2.1, 0)",
         result: "3",
+        demo: { grid: { A1: "Value", B1: "Up", A2: 2.1, B2: "" }, targetCell: "B2", formula: "=ROUNDUP(A2, 0)" },
         i18n: {
           es: { description: "Redondea un número hacia arriba, alejándose de cero.", result: "3" },
           id: { description: "Membulatkan angka ke atas, menjauhi nol.", result: "3" },
@@ -849,6 +873,7 @@ const LEVELS = [
         description: "Rounds a number down, toward zero.",
         example: "=ROUNDDOWN(2.9, 0)",
         result: "2",
+        demo: { grid: { A1: "Value", B1: "Down", A2: 2.9, B2: "" }, targetCell: "B2", formula: "=ROUNDDOWN(A2, 0)" },
         i18n: {
           es: { description: "Redondea un número hacia abajo, hacia cero.", result: "2" },
           id: { description: "Membulatkan angka ke bawah, menuju nol.", result: "2" },
@@ -861,6 +886,7 @@ const LEVELS = [
         description: "Returns the remainder after a number is divided by a divisor.",
         example: "=MOD(10, 3)",
         result: "1",
+        demo: { grid: { A1: "Num", B1: "Div", C1: "Rem", A2: 10, B2: 3, C2: "" }, targetCell: "C2", formula: "=MOD(A2, B2)" },
         i18n: {
           es: { description: "Devuelve el resto de dividir un número por un divisor.", result: "1" },
           id: { description: "Mengembalikan sisa bagi sebuah angka dengan pembagi.", result: "1" },
@@ -873,6 +899,7 @@ const LEVELS = [
         description: "Raises a number to a given power.",
         example: "=POWER(2, 8)",
         result: "256",
+        demo: { grid: { A1: "Base", B1: "Pow", C1: "Result", A2: 2, B2: 8, C2: "" }, targetCell: "C2", formula: "=POWER(A2, B2)" },
         i18n: {
           es: { description: "Eleva un número a una potencia dada.", result: "256" },
           id: { description: "Memangkatkan angka ke sebuah pangkat tertentu.", result: "256" },
@@ -885,6 +912,7 @@ const LEVELS = [
         description: "Returns the square root of a number.",
         example: "=SQRT(16)",
         result: "4",
+        demo: { grid: { A1: "Number", B1: "Root", A2: 16, B2: "" }, targetCell: "B2", formula: "=SQRT(A2)" },
         i18n: {
           es: { description: "Devuelve la raíz cuadrada de un número.", result: "4" },
           id: { description: "Mengembalikan akar kuadrat dari suatu angka.", result: "4" },
@@ -1093,6 +1121,7 @@ const LEVELS = [
         description: "Searches the first column of a table for a value and returns a value from another column in the same row.",
         example: '=VLOOKUP("Apple", A2:C10, 2, FALSE)',
         result: "Finds 'Apple' in column A and returns the matching value from column 2 (B).",
+        demo: { grid: { A1: "Fruit", B1: "Price", C1: "Stock", A2: "Apple", B2: 1.2, C2: 50, A3: "Pear", B3: 1.5, C3: 30, A4: "Plum", B4: 0.9, C4: 80, F1: "Lookup", G1: "Result", F2: "Apple", G2: "" }, targetCell: "G2", formula: '=VLOOKUP(F2, A2:C4, 2, FALSE)' },
         i18n: {
           es: { description: "Busca un valor en la primera columna de una tabla y devuelve un valor de otra columna en la misma fila.", result: "Busca 'Apple' en la columna A y devuelve el valor correspondiente de la columna 2 (B)." },
           id: { description: "Mencari nilai pada kolom pertama tabel dan mengembalikan nilai dari kolom lain di baris yang sama.", result: "Menemukan 'Apple' di kolom A dan mengembalikan nilai yang cocok dari kolom 2 (B)." },
@@ -1129,6 +1158,7 @@ const LEVELS = [
         description: "Like VLOOKUP but searches the first ROW of a table and returns a value from a row below it.",
         example: '=HLOOKUP("Price", A1:E3, 2, FALSE)',
         result: "Finds the 'Price' column across the top row and returns the value from row 2.",
+        demo: { grid: { A1: "Fruit", B1: "Apple", C1: "Pear", D1: "Plum", E1: "Kiwi", A2: "Price", B2: 1.2, C2: 1.5, D2: 0.9, E2: 2.0, G1: "Lookup", H1: "Result", G2: "Pear", H2: "" }, targetCell: "H2", formula: '=HLOOKUP(G2, A1:E2, 2, FALSE)' },
         i18n: {
           es: { description: "Como VLOOKUP pero busca en la primera FILA de una tabla y devuelve un valor de una fila inferior.", result: "Encuentra la columna 'Price' en la fila superior y devuelve el valor de la fila 2." },
           id: { description: "Seperti VLOOKUP tetapi mencari pada BARIS pertama tabel dan mengembalikan nilai dari baris di bawahnya.", result: "Menemukan kolom 'Price' di baris teratas dan mengembalikan nilai dari baris 2." },
@@ -1141,6 +1171,7 @@ const LEVELS = [
         description: "Returns the value at a given row and column position inside a range. Often paired with MATCH.",
         example: "=INDEX(C2:C5, 2)",
         result: "Returns the 2nd item in the range C2:C5.",
+        demo: { grid: { A1: "Fruit", B1: "Price", C1: "Stock", A2: "Apple", B2: 1.2, C2: 50, A3: "Pear", B3: 1.5, C3: 30, A4: "Plum", B4: 0.9, C4: 80 }, targetCell: "C5", formula: "=INDEX(C2:C4, 2)" },
         i18n: {
           es: { description: "Devuelve el valor en una posición de fila y columna dentro de un rango. Suele combinarse con MATCH.", result: "Devuelve el 2º elemento del rango C2:C5." },
           id: { description: "Mengembalikan nilai pada posisi baris dan kolom tertentu di dalam suatu rentang. Sering dipasangkan dengan MATCH.", result: "Mengembalikan item ke-2 pada rentang C2:C5." },
@@ -1153,6 +1184,7 @@ const LEVELS = [
         description: "Returns the relative POSITION of a value in a row or column. Use 0 for an exact match.",
         example: '=MATCH("Pear", A2:A5, 0)',
         result: "Finds 'Pear' and returns its position (2) within A2:A5.",
+        demo: { grid: { A1: "Fruit", A2: "Apple", A3: "Pear", A4: "Plum", A5: "Kiwi", C1: "Find", D1: "Row", C2: "Pear", D2: "" }, targetCell: "D2", formula: '=MATCH(C2, A2:A5, 0)' },
         i18n: {
           es: { description: "Devuelve la POSICIÓN relativa de un valor en una fila o columna. Usa 0 para coincidencia exacta.", result: "Encuentra 'Pear' y devuelve su posición (2) dentro de A2:A5." },
           id: { description: "Mengembalikan POSISI relatif suatu nilai dalam sebuah baris atau kolom. Gunakan 0 untuk kecocokan tepat.", result: "Menemukan 'Pear' dan mengembalikan posisinya (2) dalam A2:A5." },
@@ -1165,6 +1197,7 @@ const LEVELS = [
         description: "The flexible alternative to VLOOKUP: MATCH finds the row, INDEX returns the value. It can look to the LEFT.",
         example: '=INDEX(C2:C5, MATCH(F2, A2:A5, 0))',
         result: "Finds the row for F2 in A2:A5, then returns the matching value from C2:C5.",
+        demo: { grid: { A1: "Fruit", B1: "Price", C1: "Stock", A2: "Apple", B2: 1.2, C2: 50, A3: "Pear", B3: 1.5, C3: 30, A4: "Plum", B4: 0.9, C4: 80, F1: "Lookup", G1: "Result", F2: "Pear", G2: "" }, targetCell: "G2", formula: '=INDEX(C2:C4, MATCH(F2, A2:A4, 0))' },
         i18n: {
           es: { description: "La alternativa flexible a VLOOKUP: MATCH encuentra la fila y INDEX devuelve el valor. Puede buscar a la IZQUIERDA.", result: "Encuentra la fila de F2 en A2:A5 y devuelve el valor correspondiente de C2:C5." },
           id: { description: "Alternatif fleksibel dari VLOOKUP: MATCH mencari barisnya dan INDEX mengembalikan nilainya. Bisa mencari ke KIRI.", result: "Menemukan baris F2 di A2:A5, lalu mengembalikan nilai yang cocok dari C2:C5." },
@@ -1386,6 +1419,7 @@ const LEVELS = [
         description: 'Counts cells that meet a condition, e.g. ">5" or "apple".',
         example: '=COUNTIF(A1:A10, ">5")',
         result: "Counts cells in A1:A10 that are greater than 5.",
+        demo: { grid: { A1: "Score", B1: "Count", A2: 90, A3: 75, A4: 88, A5: 60, A6: 95, B2: "" }, targetCell: "B2", formula: '=COUNTIF(A2:A6, ">80")' },
         i18n: {
           es: { description: 'Cuenta celdas que cumplen una condición, p. ej. ">5" o "manzana".', result: "Cuenta las celdas de A1:A10 que son mayores que 5." },
           id: { description: 'Menghitung sel yang memenuhi kondisi, mis. ">5" atau "apel".', result: "Menghitung sel di A1:A10 yang lebih besar dari 5." },
@@ -1398,6 +1432,7 @@ const LEVELS = [
         description: "Counts rows that meet several conditions at once.",
         example: '=COUNTIFS(A1:A10, ">5", B1:B10, "x")',
         result: 'Counts rows where A is >5 and B is "x".',
+        demo: { grid: { A1: "Score", C1: "Zone", B1: "Count", A2: 90, C2: "North", A3: 75, C3: "South", A4: 88, C4: "North", A5: 60, C5: "North", A6: 95, C6: "South", B2: "" }, targetCell: "B2", formula: '=COUNTIFS(A2:A6, ">=80", C2:C6, "North")' },
         i18n: {
           es: { description: "Cuenta filas que cumplen varias condiciones a la vez.", result: 'Cuenta las filas donde A es >5 y B es "x".' },
           id: { description: "Menghitung baris yang memenuhi beberapa kondisi sekaligus.", result: 'Menghitung baris di mana A >5 dan B adalah "x".' },
@@ -1410,6 +1445,7 @@ const LEVELS = [
         description: "Adds up cells that meet a condition.",
         example: '=SUMIF(A1:A10, ">5", B1:B10)',
         result: "Sums column B where column A is greater than 5.",
+        demo: { grid: { A1: "Score", B1: "Sales", C1: "Total", A2: 90, B2: 200, A3: 75, B3: 150, A4: 88, B4: 120, A5: 60, B5: 80, A6: 95, B6: 300, C2: "" }, targetCell: "C2", formula: '=SUMIF(A2:A6, ">=80", B2:B6)' },
         i18n: {
           es: { description: "Suma las celdas que cumplen una condición.", result: "Suma la columna B donde la columna A es mayor que 5." },
           id: { description: "Menjumlahkan sel yang memenuhi kondisi.", result: "Menjumlahkan kolom B di mana kolom A lebih besar dari 5." },
@@ -1422,6 +1458,7 @@ const LEVELS = [
         description: "Averages cells that meet a condition.",
         example: '=AVERAGEIF(A1:A10, ">5", B1:B10)',
         result: "Averages column B where column A is greater than 5.",
+        demo: { grid: { A1: "Grade", B1: "Price", C1: "Avg", A2: "A", B2: 10, A3: "B", B3: 8, A4: "A", B4: 12, A5: "A", B5: 9, A6: "B", B6: 7, C2: "" }, targetCell: "C2", formula: '=AVERAGEIF(A2:A6, "A", B2:B6)' },
         i18n: {
           es: { description: "Promedia las celdas que cumplen una condición.", result: "Promedia la columna B donde la columna A es mayor que 5." },
           id: { description: "Merata-rata sel yang memenuhi kondisi.", result: "Merata-rata kolom B di mana kolom A lebih besar dari 5." },
@@ -1434,6 +1471,7 @@ const LEVELS = [
         description: "Returns the middle value of a set of numbers when sorted.",
         example: "=MEDIAN(A1:A5)",
         result: "The middle number once the values are sorted.",
+        demo: { grid: { A1: "Value", B1: "Median", A2: 5, A3: 1, A4: 9, A5: 3, A6: 7, B2: "" }, targetCell: "B2", formula: "=MEDIAN(A2:A6)" },
         i18n: {
           es: { description: "Devuelve el valor del medio de un conjunto de números ordenados.", result: "El número del medio una vez ordenados los valores." },
           id: { description: "Mengembalikan nilai tengah dari kumpulan angka yang diurutkan.", result: "Nilai tengah setelah angka diurutkan." },

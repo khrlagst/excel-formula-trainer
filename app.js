@@ -963,18 +963,36 @@ function renderLearnInto(list, lvl) {
   );
   if (!formulas.length) { list.appendChild(el("p", { class: "muted", text: t("learn.none") })); return; }
   for (const f of formulas) {
-    list.appendChild(el("article", { class: "card" }, [
+    const children = [
       el("header", { class: "card__head" }, [
         el("h3", { class: "card__name", text: f.name }),
       ]),
       el("code", { class: "card__syntax", text: f.syntax }),
       el("p", { class: "card__desc", text: f.description }),
-      el("div", { class: "card__example" }, [
+    ];
+    if (f.demo) {
+      let demoVal;
+      try { demoVal = formatValue(evaluateFormula(f.demo.formula, f.demo.grid)); }
+      catch (e) { demoVal = "—"; }
+      const bounds = gridBounds(f.demo.grid);
+      const table = buildGridTable(f.demo.grid, bounds, f.demo.targetCell);
+      children.push(el("div", { class: "card__demo" }, [
+        el("span", { class: "card__exlabel", text: t("example.label") }),
+        el("div", { class: "grid-wrap" }, [table]),
+        el("p", { class: "card__democalc" }, [
+          el("code", { text: f.demo.formula }),
+          el("span", { class: "card__demoeq", text: " = " }),
+          el("strong", { text: demoVal }),
+        ]),
+      ]));
+    } else {
+      children.push(el("div", { class: "card__example" }, [
         el("span", { class: "card__exlabel", text: t("example.label") }),
         el("code", { text: f.example }),
         el("p", { class: "card__exresult", text: t("example.result", { r: f.result }) }),
-      ]),
-    ]));
+      ]));
+    }
+    list.appendChild(el("article", { class: "card" }, children));
   }
 }
 
