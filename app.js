@@ -768,10 +768,10 @@ function renderTabs() {
 
 function renderBottomNav() {
   const items = [
-    ["learn", "??", t("nav.learn")],
-    ["practice", "??", t("nav.practice")],
-    ["quiz", "??", t("nav.quiz")],
-    ["more", "??", t("nav.more")],
+    ["learn", "📚", t("nav.learn")],
+    ["practice", "🧪", t("nav.practice")],
+    ["quiz", "🎯", t("nav.quiz")],
+    ["more", "💡", t("nav.more")],
   ];
   const nav = el("nav", { class: "bottomnav", "aria-label": "Primary" });
   for (const [id, icon, label] of items) {
